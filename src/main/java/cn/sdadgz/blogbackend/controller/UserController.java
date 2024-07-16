@@ -79,7 +79,8 @@ public class UserController {
 
     @GetMapping("/me")
     public Result test() {
-        return Result.success(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        AuthorizationUser authorizationUser = (AuthorizationUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return Result.success(authorizationUser.getUser());
     }
 
     // 登出，没让写，不写
