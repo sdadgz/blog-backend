@@ -27,7 +27,7 @@ public class Generator {
         String packagePath = "cn.sdadgz.blogbackend";
 
         // 表名
-        String tableName = "user_permission";
+        String tableName = "post";
 
         // 这里也改改
         FastAutoGenerator.create("jdbc:mysql://sdadgz.cn:3307/blog_backend", "root", "sdadgz.cn")

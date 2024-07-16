@@ -77,8 +77,10 @@ public class UserController {
         return Result.success();
     }
 
-    @GetMapping("/test")
+    @GetMapping("/me")
     public Result test() {
-        return Result.success(SecurityContextHolder.getContext().getAuthentication());
+        return Result.success(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
+
+    // 登出，没让写，不写
 }
