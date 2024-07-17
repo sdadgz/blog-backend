@@ -1,6 +1,7 @@
 package cn.sdadgz.blogbackend.controller;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.lang.Dict;
 import cn.sdadgz.blogbackend.common.Constants;
 import cn.sdadgz.blogbackend.common.Result;
 import cn.sdadgz.blogbackend.entity.Post;
@@ -51,25 +52,56 @@ public class PostController {
     }
 
     @GetMapping
-    public Result getByUid(@RequestParam("uid") String uid,
+    public Result getByUid(@RequestParam(value = "uid", required = false) Long uid,
                            @RequestParam("pageNum") Integer pageNum,
                            @RequestParam("pageSize") Integer pageSize,
-                           @RequestParam(value = "desc", required = false) Boolean desc) { // 默认倒叙
-        // pageHelper不加了，也不封装一遍Controller了，就这样吧
+                           @RequestParam(value = "desc", defaultValue = "true") Boolean desc) { // 默认倒叙
+        // 不封装一遍Controller了，就这样吧
         // 导过来的功夫够手写完了都
 
-        CommonUtil.thisOrDefault(desc, true);
+        uid = UserUtil.getUserId();
+
         PageHelper.startPage(pageNum, pageSize);
 
+        // 讲道理不应该这样写，要手写sql，实习再写sql吧，
         List<Post> list = postService.lambdaQuery()
                 .eq(Post::getUserId, uid)
-                .orderBy(true, desc, Post::getCreate, Post::getPostId)
+                .orderBy(true, !desc, Post::getCreate)
+                .orderByAsc(Post::getPostId) // 加上，教训这是
                 .list();
 
         PageInfo<Post> pageInfo = new PageInfo<>(list);
-        System.out.println(pageInfo);
+//        System.out.println(pageInfo);
 
-        // 讲道理不应该这样写，要手写sql，实习再写sql吧，
+        // 到时候再写dao吧
+        return Result.success(Dict.create()
+                .set(Constants.ROWS, pageInfo.getList())
+                .set(Constants.TOTAL, pageInfo.getTotal()));
+    }
+
+    @GetMapping("/{postId}")
+    public Result getById(@PathVariable("postId") Long postId) {
+        return Result.success(postService.getById(postId));
+    }
+
+    @PutMapping("/{postId}")
+    public Result updateById(@PathVariable("postId") Long postId, @RequestBody Post post) {
+
+        ExceptionUtil.throwIf(!UserUtil.getUserId().equals(postService.getById(postId).getUserId()), Constants.CODE_401, "无权限");
+
+        post.setPostId(postId);
+        post.setCreate(null);
+        post.setLastModified(LocalDateTimeUtil.now());
+        postService.updateById(post);
+        return Result.success();
+    }
+
+    @DeleteMapping("/{postId}")
+    public Result deleteById(@PathVariable("postId") Long postId) {
+
+        ExceptionUtil.throwIf(!UserUtil.getUserId().equals(postService.getById(postId).getUserId()), Constants.CODE_401, "无权限");
+
+        postService.removeById(postId);
         return Result.success();
     }
 

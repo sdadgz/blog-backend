@@ -1,6 +1,7 @@
 package cn.sdadgz.blogbackend.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public class Post implements Serializable {
 
     private Long userId;
 
+    @TableField("`create`")
     private LocalDateTime create;
 
     private LocalDateTime lastModified;

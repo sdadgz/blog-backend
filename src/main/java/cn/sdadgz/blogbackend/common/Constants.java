@@ -15,4 +15,7 @@ public interface Constants {
     String TOKEN_HEADER = "Authorization";
 
     String SALT = "なぜ面接前に彼に手紙を書き始めなかったのか、そして制限時間がとても短かったのか、これについて何を書けばいいのか、ダオレイヤーで直接スキップして、とにかくお金を渡さないで";
+
+    String ROWS = "rows";
+    String TOTAL = "total";
 }

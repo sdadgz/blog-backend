@@ -53,6 +53,7 @@ public class JwtTokenAuthorization  extends OncePerRequestFilter {
 
         header = header.split(" ")[1];
         JWT token = JWTUtil.parseToken(header);
+//        System.out.println(token);
 
         // 从服务器获取并验证token合法性
         long userId = Long.parseLong(token.getPayload(User.Fields.userId).toString());
