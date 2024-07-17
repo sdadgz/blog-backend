@@ -40,7 +40,7 @@ public class User implements Serializable {
 
     private String username;
 
-    @JsonIgnore
+//    @JsonIgnore
     private String password;
 
     private String email;
@@ -51,4 +51,6 @@ public class User implements Serializable {
 
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
+
+
 }

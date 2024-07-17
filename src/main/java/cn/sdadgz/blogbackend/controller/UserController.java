@@ -13,6 +13,9 @@ import cn.sdadgz.blogbackend.common.Result;
 import cn.sdadgz.blogbackend.entity.AuthorizationUser;
 import cn.sdadgz.blogbackend.entity.User;
 import cn.sdadgz.blogbackend.service.IUserService;
+import cn.sdadgz.blogbackend.util.CommonUtil;
+import cn.sdadgz.blogbackend.util.ExceptionUtil;
+import cn.sdadgz.blogbackend.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -66,9 +69,10 @@ public class UserController {
 
     @PostMapping("/register")
     public Result register(@RequestBody User user) {
-        if (Objects.isNull(user.getUsername()) || Objects.isNull(user.getPassword())) {
-            return Result.error(Constants.CODE_400, "用户名或密码不能为空");
-        }
+
+        // 用户名或密码不能为空
+        ExceptionUtil.throwIf(CommonUtil.isNull(user.getUsername()), Constants.CODE_400, "用户名或密码不能为空");
+        ExceptionUtil.throwIf(CommonUtil.isNull(user.getPassword()), Constants.CODE_400, "用户名或密码不能为空");
 
         userService.save(user
                 .setCreate(LocalDateTimeUtil.now())
@@ -78,9 +82,8 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public Result test() {
-        AuthorizationUser authorizationUser = (AuthorizationUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return Result.success(authorizationUser.getUser());
+    public Result me() {
+        return Result.success(UserUtil.getUser());
     }
 
     // 登出，没让写，不写
