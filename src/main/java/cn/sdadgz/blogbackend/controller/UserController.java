@@ -10,6 +10,8 @@ import cn.hutool.jwt.signers.JWTSigner;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import cn.sdadgz.blogbackend.common.Constants;
 import cn.sdadgz.blogbackend.common.Result;
+import cn.sdadgz.blogbackend.dao.UserWithoutPassword;
+import cn.sdadgz.blogbackend.dao.UsernamePassword;
 import cn.sdadgz.blogbackend.entity.AuthorizationUser;
 import cn.sdadgz.blogbackend.entity.User;
 import cn.sdadgz.blogbackend.service.IUserService;
@@ -46,7 +48,7 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public Result login(@RequestBody User user) {
+    public Result login(@RequestBody UsernamePassword user) {
         // 内部使用 UserDetailsService 查询用户，正确返回信息 错误返回空（大概）
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
@@ -83,7 +85,7 @@ public class UserController {
 
     @GetMapping("/me")
     public Result me() {
-        return Result.success(UserUtil.getUser());
+        return Result.success(new UserWithoutPassword(UserUtil.getUser()));
     }
 
     // 登出，没让写，不写
