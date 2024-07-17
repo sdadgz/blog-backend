@@ -14,6 +14,7 @@ import cn.sdadgz.blogbackend.dao.UserWithoutPassword;
 import cn.sdadgz.blogbackend.dao.UsernamePassword;
 import cn.sdadgz.blogbackend.entity.AuthorizationUser;
 import cn.sdadgz.blogbackend.entity.User;
+import cn.sdadgz.blogbackend.exception.CommonException;
 import cn.sdadgz.blogbackend.service.IUserService;
 import cn.sdadgz.blogbackend.util.CommonUtil;
 import cn.sdadgz.blogbackend.util.ExceptionUtil;
@@ -49,14 +50,20 @@ public class UserController {
 
     @PostMapping("/login")
     public Result login(@RequestBody UsernamePassword user) {
-        // 内部使用 UserDetailsService 查询用户，正确返回信息 错误返回空（大概）
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-        // 存入刚才返回信息的内部存储的 UserDetails
-        Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        AuthorizationUser principal;
+        try {
+            // 内部使用 UserDetailsService 查询用户，正确返回信息 错误返回空（大概）
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+            // 存入刚才返回信息的内部存储的 UserDetails
+            Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
-        AuthorizationUser principal = (AuthorizationUser) authenticate.getPrincipal();
-        System.out.println(principal);
+            principal = (AuthorizationUser) authenticate.getPrincipal();
+//        System.out.println(principal);
+        } catch (Exception e) {
+            throw new CommonException(Constants.CODE_400, "用户名或密码错误");
+        }
+
 
         // 返回一个token，在 JwtAuthenticationTokenFilter 中根据这个token获取权限和信息
         Map<String, Object> map = BeanUtil.beanToMap(principal.getUser());

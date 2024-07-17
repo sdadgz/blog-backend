@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM openjdk:17
 
 # 设置环境变量，例如时区、端口等
 ENV TZ=Asia/Shanghai
